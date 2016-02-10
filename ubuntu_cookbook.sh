@@ -51,20 +51,20 @@ cat > /etc/init.d/x11vnc <<EOT
 
 ### BEGIN INIT INFO
 # Provides:x11vnc
-# Required-Start:$remote_fs $syslog
-# Required-Stop:$remote_fs $syslog
+# Required-Start:\$remote_fs \$syslog
+# Required-Stop:\$remote_fs \$syslog
 # Default-Start:2 3 4 5
 # Default-Stop:0 1 6
 # Short-Description:Start X11VNC
 # Description:Start VNC server X11VNC at boot
 ### END INIT INFO
 
-case "$1" in
+case "\$1" in
         start) 
                 sleep 6
-                XAUTH=`find /var/run/ldm-xauth* -type f -name Xauthority`
-                logger -f /var/log/x11vnc "Starting with $XAUTH"
-                start-stop-daemon --start --oknodo --pidfile /var/run/x11vnc.pid --background --nicelevel 15 --make-pidfile --exec /usr/bin/x11vnc -- -display :7 -loop -rfbauth /etc/x11vnc.pass -logfile /var/log/x11vnc -xauth $XAUTH
+                XAUTH=\`find /var/run/ldm-xauth* -type f -name Xauthority\`
+                logger -f /var/log/x11vnc "Starting with \$XAUTH"
+                start-stop-daemon --start --oknodo --pidfile /var/run/x11vnc.pid --background --nicelevel 15 --make-pidfile --exec /usr/bin/x11vnc -- -display :7 -loop -rfbauth /etc/x11vnc.pass -logfile /var/log/x11vnc -xauth \$XAUTH
         ;;
         stop)  
                 logger -f /var/log/x11vnc "Stopping"
@@ -72,23 +72,23 @@ case "$1" in
         ;;
         restart)
                 logger -f /var/log/x11vnc "Restarting"
-                $0 stop
-                $0 start
+                \$0 stop
+                \$0 start
         ;;
         condrestart)
-                PID=`cat /var/run/x11vnc.pid`
-                RUNNING=`ps h --ppid $PID`
-                if [ "$RUNNING" == "" ]; then
+                PID=\`cat /var/run/x11vnc.pid\`
+                RUNNING=\`ps h --ppid \$PID\`
+                if [ "\$RUNNING" == "" ]; then
                         logger -f /var/log/x11vnc "No process matching /var/run/x11vnc.pid"
                         echo "No process matching /var/run/x11vnc.pid"
-                        $0 restart
+                        \$0 restart
                 else   
                         logger -f /var/log/x11vnc "Process matching /var/run/x11vnc.pid exists"
                         echo "Process matching /var/run/x11vnc.pid exists - no action taken"
                 fi
         ;;
         *)
-                echo "Usage: $0 start|stop|restart|condrestart"
+                echo "Usage: \$0 start|stop|restart|condrestart"
                 exit 1
         ;;
 esac
