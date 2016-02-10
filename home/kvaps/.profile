@@ -30,6 +30,12 @@ amixer -q set Capture toggle 100
 gsettings set org.gnome.desktop.wm.keybindings switch-input-source "['<Ctrl>Shift_L', '<Ctrl>>Shift_R', '<Shift>Control_L', '<Shift>Control_R']"
 gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]"
 
+# Disable sticky edges
+dconf write /org/compiz/profiles/unity/plugins/unityshell/launcher-capture-mouse false
+
+# Disable shortcut keys hint
+dconf write /org/compiz/profiles/unity/plugins/unityshell/shortcut-overlay false
+
 
 ## Disable online search
 #gsettings set com.canonical.Unity.Lenses remote-content-search 'none'

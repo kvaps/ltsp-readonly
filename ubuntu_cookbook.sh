@@ -12,7 +12,8 @@ sudo apt-get -y update
 sudo apt-get -y install skype
 
 # disable amazon and online search
-apt-get -y remove unity-lens-shopping
+apt-get -y purge unity-lens-shopping
+apt-get -y purge unity-webapps-common
 
 # hide sata disks from nautilus
 echo 'ENV{ID_ATA_SATA}=="1" ENV{UDISKS_IGNORE}="1"' >> /etc/udev/rules.d/99-hide-partitions.rules
@@ -30,6 +31,12 @@ Name=gnome-panel
 Comment[en_US]=
 Comment=
 EOT
+
+# install Remmina from PPA and FreeRDP
+sudo apt-add-repository -y ppa:remmina-ppa-team/remmina-next
+sudo apt-get -y update
+sudo apt-get -y install remmina remmina-plugin-rdp libfreerdp-plugins-standard
+sudo apt-get -y install freerdp-x11
 
 # install russian language
 apt-get -y install `check-language-support -l ru`
