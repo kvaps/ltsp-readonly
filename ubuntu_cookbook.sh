@@ -7,9 +7,9 @@ sed -i '/^CMDLINE_LINUX_DEFAULT.*[^pci=noacpi]"$/ s/"$/ pci=noacpi"/g' /opt/ltsp
 apt-get -y install vim
 
 # skype
-sudo add-apt-repository -y "deb http://archive.canonical.com/ $(lsb_release -sc) partner"
-sudo apt-get -y update
-sudo apt-get -y install skype
+add-apt-repository -y "deb http://archive.canonical.com/ $(lsb_release -sc) partner"
+apt-get -y update
+apt-get -y install skype
 
 # disable amazon and online search
 apt-get -y purge unity-lens-shopping
@@ -33,10 +33,18 @@ Comment=
 EOT
 
 # install Remmina from PPA and FreeRDP
-sudo apt-add-repository -y ppa:remmina-ppa-team/remmina-next
-sudo apt-get -y update
-sudo apt-get -y install remmina remmina-plugin-rdp libfreerdp-plugins-standard
-sudo apt-get -y install freerdp-x11
+apt-add-repository -y ppa:remmina-ppa-team/remmina-next
+apt-get -y update
+apt-get -y install remmina remmina-plugin-rdp libfreerdp-plugins-standard
+apt-get -y install freerdp-x11
+
+# imstall paperflash without chrome
+add-apt-repository -y ppa:skunk/pepper-flash
+add-apt-repository -y ppa:nilarimogard/webupd8
+apt-get -y update
+apt-get -y install pepflashplugin-installer freshplayerplugin
+mkdir -p /opt/google/chrome/PepperFlash
+ln -s /usr/lib/pepflashplugin-installer/libpepflashplayer.so /opt/google/chrome/PepperFlash
 
 # install russian language
 apt-get -y install `check-language-support -l ru`
