@@ -21,11 +21,6 @@ fi
 
 cd $HOME
 
-
-# Disable Mic listening, enable mic in Pulse
-amixer -q set 'Mic' 0
-amixer -q set Capture toggle 100
-
 # Change keyboard
 gsettings set org.gnome.desktop.wm.keybindings switch-input-source "['<Ctrl>Shift_L', '<Ctrl>>Shift_R', '<Shift>Control_L', '<Shift>Control_R']"
 gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]"
@@ -35,32 +30,6 @@ dconf write /org/compiz/profiles/unity/plugins/unityshell/launcher-capture-mouse
 
 # Disable shortcut keys hint
 dconf write /org/compiz/profiles/unity/plugins/unityshell/shortcut-overlay false
-
-
-## Disable online search
-#gsettings set com.canonical.Unity.Lenses remote-content-search 'none'
-#
-## Disable /dev/sda from unity
-#blocked_devices=$(
-#    for i in `ls /dev/disk/by-uuid/*`; do
-#        if [[ `readlink $i` == *"/sda"* ]] ; then
-#            named=false
-#            for j in `ls /dev/disk/by-label/*`; do
-#                if [[ `readlink $j` == *"/sda"* ]] ; then
-#                     if [[ `readlink $i` == `readlink $j` ]] ; then
-#                          echo -en "'`basename $i`-`basename $j`', "
-#                          named=true
-#                     fi
-#                fi
-#            done
-#            if [ "$named" = false ] ; then
-#                 echo -en "'`basename $i`-', "
-#            fi
-#        fi
-#    done
-#)
-#blocked_devices=` echo $blocked_devices | sed 's/,$//'`
-#gsettings set com.canonical.Unity.Devices blacklist "[ $blocked_devices ]"
 
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
