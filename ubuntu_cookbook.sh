@@ -54,6 +54,19 @@ apt-get -y install openssh-server
 
 # install x11vnc
 apt-get -y install x11vnc
+
+cat > /usr/bin/x11vncd <<EOT
+#!/bin/bash
+x11vncd () {
+     XAUTH=\`ls -1td /var/run/ldm-xauth-* | head -n1 | sed 's|$|/Xauthority|'\`
+     logger -f /var/log/x11vnc "Starting with \$XAUTH"
+     /usr/bin/x11vnc -display :7 -rfbauth /etc/x11vnc.pass -logfile /var/log/x11vnc -xauth \$XAUTH 
+     sleep 1
+     x11vncd
+}
+x11vncd
+EOT
+
 cat > /etc/init.d/x11vnc <<EOT
 #!/bin/sh
 
@@ -69,10 +82,7 @@ cat > /etc/init.d/x11vnc <<EOT
 
 case "\$1" in
         start) 
-                sleep 6
-                XAUTH=\`find /var/run/ldm-xauth* -type f -name Xauthority\`
-                logger -f /var/log/x11vnc "Starting with \$XAUTH"
-                start-stop-daemon --start --oknodo --pidfile /var/run/x11vnc.pid --background --nicelevel 15 --make-pidfile --exec /usr/bin/x11vnc -- -display :7 -loop -rfbauth /etc/x11vnc.pass -logfile /var/log/x11vnc -xauth \$XAUTH
+                start-stop-daemon --start --oknodo --pidfile /var/run/x11vnc.pid --background --nicelevel 15 --make-pidfile --exec /usr/bin/x11vncd
         ;;
         stop)  
                 logger -f /var/log/x11vnc "Stopping"
@@ -83,27 +93,23 @@ case "\$1" in
                 \$0 stop
                 \$0 start
         ;;
-        condrestart)
+        status)
                 PID=\`cat /var/run/x11vnc.pid\`
-                RUNNING=\`ps h --ppid \$PID\`
-                if [ "\$RUNNING" == "" ]; then
-                        logger -f /var/log/x11vnc "No process matching /var/run/x11vnc.pid"
-                        echo "No process matching /var/run/x11vnc.pid"
-                        \$0 restart
+                if [ -e /proc/\$PID ]; then
+                        echo "Process \$PID is running"
                 else   
-                        logger -f /var/log/x11vnc "Process matching /var/run/x11vnc.pid exists"
-                        echo "Process matching /var/run/x11vnc.pid exists - no action taken"
+                        echo "No process matching"
                 fi
         ;;
         *)
-                echo "Usage: \$0 start|stop|restart|condrestart"
+                echo "Usage: \$0 start|stop|restart|status"
                 exit 1
         ;;
 esac
-
 exit 0
 EOT
 
+chmod +x /usr/bin/x11vncd
 chmod 755 /etc/init.d/x11vnc
 update-rc.d x11vnc defaults
 x11vnc -storepasswd /etc/x11vnc.pass
