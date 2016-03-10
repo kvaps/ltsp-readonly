@@ -1,24 +1,37 @@
-#!/bin/bash
+#  LTSP5 readonly configs and Cookbook
 
-# fix syncing
-sed -i '/^CMDLINE_LINUX_DEFAULT.*[^pci=noacpi]"$/ s/"$/ pci=noacpi"/g' /opt/ltsp/amd64/etc/ltsp/update-kernels.conf
+## Cookbook
 
-# vim
+* vim:
+
+```bash
 apt-get -y install vim
+```
 
-# skype
+* skype:
+
+```bash
 add-apt-repository -y "deb http://archive.canonical.com/ $(lsb_release -sc) partner"
 apt-get -y update
 apt-get -y install skype
+```
 
-# disable amazon and online search
+* disable amazon and online search:
+
+```bash
 apt-get -y purge unity-lens-shopping
 apt-get -y purge unity-webapps-common
+```
 
-# hide sata disks from nautilus
+* hide sata disks from nautilus:
+
+```bash
 echo 'ENV{ID_ATA_SATA}=="1" ENV{UDISKS_IGNORE}="1"' >> /etc/udev/rules.d/99-hide-partitions.rules
+```
 
-# enable unity-panel-service
+* enable unity-panel-service:
+
+```bash
 cat > /etc/xdg/autostart/unity-panel-service.desktop <<EOT
 [Desktop Entry]
 Type=Application
@@ -31,33 +44,51 @@ Name=gnome-panel
 Comment[en_US]=
 Comment=
 EOT
+```
 
-# install Remmina from PPA and FreeRDP
+* install Remmina from PPA and FreeRDP:
+
+```bash
 apt-add-repository -y ppa:remmina-ppa-team/remmina-next
 apt-get -y update
 apt-get -y install remmina remmina-plugin-rdp libfreerdp-plugins-standard
 apt-get -y install freerdp-x11
+```
 
-# install chromium with paperflash
+* install chromium with paperflash:
+
+```bash
 sudo apt-get install chromium-browser
 sudo apt-get install pepperflashplugin-nonfree
 sudo update-pepperflashplugin-nonfree --install
+```
 
-# install paperflash without chrome
+* install paperflash without chrome:
+
+```bash
 add-apt-repository -y ppa:skunk/pepper-flash
 add-apt-repository -y ppa:nilarimogard/webupd8
 apt-get -y update
 apt-get -y install pepflashplugin-installer freshplayerplugin
 mkdir -p /opt/google/chrome/PepperFlash
 ln -s /usr/lib/pepflashplugin-installer/libpepflashplayer.so /opt/google/chrome/PepperFlash
+```
 
-# install russian language
+* install russian language:
+
+```bash
 apt-get -y install `check-language-support -l ru`
+```
 
-# install ssh
+* install ssh:
+
+```bash
 apt-get -y install openssh-server
+```
 
-# install x11vnc
+* install x11vnc:
+
+```bash
 apt-get -y install x11vnc
 
 cat > /usr/bin/x11vncd <<EOT
@@ -118,3 +149,4 @@ chmod +x /usr/bin/x11vncd
 chmod 755 /etc/init.d/x11vnc
 update-rc.d x11vnc defaults
 x11vnc -storepasswd /etc/x11vnc.pass
+```
