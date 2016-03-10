@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# fix syncing
-sed -i '/^CMDLINE_LINUX_DEFAULT.*[^pci=noacpi]"$/ s/"$/ pci=noacpi"/g' /opt/ltsp/amd64/etc/ltsp/update-kernels.conf
-
 # vim
 apt-get -y install vim
 
@@ -10,10 +7,6 @@ apt-get -y install vim
 add-apt-repository -y "deb http://archive.canonical.com/ $(lsb_release -sc) partner"
 apt-get -y update
 apt-get -y install skype
-
-# disable amazon and online search
-apt-get -y purge unity-lens-shopping
-apt-get -y purge unity-webapps-common
 
 # hide sata disks from nautilus
 echo 'ENV{ID_ATA_SATA}=="1" ENV{UDISKS_IGNORE}="1"' >> /etc/udev/rules.d/99-hide-partitions.rules
