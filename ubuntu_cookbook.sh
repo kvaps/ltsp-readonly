@@ -38,7 +38,12 @@ apt-get -y update
 apt-get -y install remmina remmina-plugin-rdp libfreerdp-plugins-standard
 apt-get -y install freerdp-x11
 
-# imstall paperflash without chrome
+# install chromium with paperflash
+sudo apt-get install chromium-browser
+sudo apt-get install pepperflashplugin-nonfree
+sudo update-pepperflashplugin-nonfree --install
+
+# install paperflash without chrome
 add-apt-repository -y ppa:skunk/pepper-flash
 add-apt-repository -y ppa:nilarimogard/webupd8
 apt-get -y update
