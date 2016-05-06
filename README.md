@@ -1,4 +1,7 @@
-#  LTSP5 readonly configs and Cookbook
+#  LTSP5 readonly patch and Cookbook
+
+This patch allow you to create readonly users. And allow you to edit default configs in user's home directory.
+Any changes made by user will not be saved in its home directory.
 
 ## Readonly patch
 
@@ -26,6 +29,12 @@ ltsp-update-image
 useradd -m -s /bin/bash user
 passwd user
 usermod -a -G readonly user
+```
+
+* Remove write permissions from user's home directory.
+```bash
+chown -R root:root /home/user
+chmod -R o-w /home/user
 ```
 
 ## Cookbook
