@@ -163,3 +163,18 @@ chmod 755 /etc/init.d/x11vnc
 update-rc.d x11vnc defaults
 x11vnc -storepasswd /etc/x11vnc.pass
 ```
+* fix xscreensaver autostart
+```bash
+cat > /etc/xdg/autostart/xscreensaver.desktop <<EOT
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/xscreensaver -nosplash
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[en_US]=xscreenasaver
+Name=xscreensaver
+Comment[en_US]=
+Comment=
+EOT
+```
