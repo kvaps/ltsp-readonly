@@ -8,19 +8,6 @@
 # for ssh logins, install and configure the libpam-umask package.
 #umask 022
 
-# Use /tmp/$USER as $HOME, symlink configs.
-if [ -z $OLD_HOME ]; then
-    export OLD_HOME=$HOME
-    export HOME=/tmp/$USER
-    mkdir -p $HOME
-    find $OLD_HOME -type f -exec sh -c '
-        path=`echo "$@" | sed "s|$OLD_HOME||g"`
-        mkdir -p `dirname ${HOME}${path}`
-        ln -s ${OLD_HOME}${path} ${HOME}${path}' _ {} \;
-fi
-
-cd $HOME
-
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists

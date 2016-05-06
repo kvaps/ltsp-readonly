@@ -1,0 +1,59 @@
+diff -u -r a/client/localapps/ldm-rc.d/X01-localapps b/client/localapps/ldm-rc.d/X01-localapps
+--- a/client/localapps/ldm-rc.d/X01-localapps	2016-02-07 22:10:23.000000000 +0300
++++ b/client/localapps/ldm-rc.d/X01-localapps	2016-05-06 19:12:00.662532515 +0300
+@@ -114,8 +114,21 @@
+     if [ "$(stat -c %m "$LDM_HOME")" != "/" ]; then
+         unset SSHFS_HOME
+     else
+-        export SSHFS_HOME=true
+-        sshfs -o "${follow_home_symlinks}${disable_hardlink}allow_other,nonempty,ControlPath=$LDM_SOCKET" "$LDM_SERVER:$LDM_HOME" "$LDM_HOME"
++
++        if ! id -nG "$pw_uid" | grep -qw '\b'"${READONLY_GROUP:-readonly}"'\b'; then
++            export SSHFS_HOME=true
++            sshfs -o "${follow_home_symlinks}${disable_hardlink}allow_other,nonempty,ControlPath=$LDM_SOCKET" "$LDM_SERVER:$LDM_HOME" "$LDM_HOME"
++        else
++            export READONLY_HOME=true
++            export TMP_HOME="/tmp${LDM_HOME}-tmp"
++            export SSH_HOME="/tmp${LDM_HOME}-sshfs"
++            mkdir -p "$TMP_HOME"
++            mkdir -p "$SSH_HOME"
++            mount -t tmpfs none "$TMP_HOME"
++            sshfs -o "${follow_home_symlinks}${disable_hardlink}allow_other,nonempty,ControlPath=$LDM_SOCKET" "$LDM_SERVER:$LDM_HOME" "$SSH_HOME"
++            mount -t aufs -o br=${TMP_HOME}:${SSH_HOME} none $LDM_HOME
++        fi
++
+     fi
+ 
+     # Mount other directories
+diff -u -r a/client/localapps/ldm-rc.d/X99-zlocalapps-cleanup b/client/localapps/ldm-rc.d/X99-zlocalapps-cleanup
+--- a/client/localapps/ldm-rc.d/X99-zlocalapps-cleanup	2016-02-07 22:10:23.000000000 +0300
++++ b/client/localapps/ldm-rc.d/X99-zlocalapps-cleanup	2016-05-06 19:12:00.055872573 +0300
+@@ -10,7 +10,7 @@
+     fi
+ 
+     # Unmount sshfs and remove the mount dir
+-    if [ -n "$SSHFS_HOME" ]; then
++    if [ -n "$SSHFS_HOME" ] || [ -n "$READONLY_HOME" ]; then
+         if  [ -n "$LDM_USERNAME" ]; then
+             # The user processes need to be terminated before $LDM_HOME gets
+             # unmounted, otherwise they end up writing their data in the local
+@@ -27,8 +27,17 @@
+                 i=$(($i+1))
+             done
+         fi
+-        fusermount -uqz ${LDM_HOME}
+-        rmdir ${LDM_HOME}
++        if [ -n "$SSHFS_HOME" ]; then
++            fusermount -uqz ${LDM_HOME}
++            rmdir ${LDM_HOME}
++        else
++            umount ${LDM_HOME}
++            fusermount -uqz ${SSH_HOME}
++            umount ${TMP_HOME}
++            rmdir ${LDM_HOME}
++            rmdir ${SSH_HOME}
++            rmdir ${TMP_HOME}
++        fi
+     fi
+ 
+     # Unmount other mounts

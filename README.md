@@ -1,5 +1,33 @@
 #  LTSP5 readonly configs and Cookbook
 
+## Readonly patch
+
+* Copy `readonly.patch` to `/opt/ltsp/i386/usr/share/ldm/rc.d/`
+
+* Apply patch
+```bash
+cd /opt/ltsp/i386/usr/share/ldm/rc.d/
+patch < readonly.patch
+```
+
+* Install aufs-tools in `ltsp-chroot`
+```bash
+apt-get -y update
+apt-get -y install aufs-tools
+```
+
+* Update your image
+```bash
+ltsp-update-image
+```
+
+* Create user and add it to `readonly` group
+```bash
+useradd -m -s /bin/bash user
+passwd user
+usermod -a -G readonly user
+```
+
 ## Cookbook
 
 * vim:
